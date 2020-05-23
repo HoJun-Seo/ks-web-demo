@@ -2,8 +2,7 @@ package kr.ac.ks.app.domain;
 
 import lombok.*;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,7 +10,10 @@ import javax.persistence.Enumerated;
 @Getter
 @EqualsAndHashCode(of = "id")
 @Builder
+@Entity
 public class Student {
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private String email;
