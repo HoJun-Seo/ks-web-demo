@@ -41,8 +41,7 @@ public class StudentControllerTests {
         mockMvc.perform(post("/api/students/")
                 .contentType(MediaType.APPLICATION_JSON) //JSON 응답 확인
                 .accept(MediaType.APPLICATION_JSON) //주는 것도 JSON 으로 전달
-                .content(objectMapper.writeValueAsString(student))
-        )
+                .content(objectMapper.writeValueAsString(student)))
                 .andDo(print()) //상태코드와 JSON 응답이 정확한지 확인하기 위한 출력문
                 .andExpect(status().isCreated()); //상태 코드 확인
     }
