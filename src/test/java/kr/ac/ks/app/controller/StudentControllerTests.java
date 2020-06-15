@@ -107,4 +107,62 @@ public class StudentControllerTests {
                 .andExpect(jsonPath("id").exists()); //json 표준 포맷에 id 값이 존재해야 한다.
                 //id 값은 존재하기만 하면 되므로 exists 로 변경해준다.
     }
+
+    @Test
+    public void testCreateStudentBadRequest() throws Exception {
+        Student badRequest = Student.builder()
+                .id(100L) //StudentDto 에는 id 값이 없기 때문에 400 에러를 터트린다.(SQL injection 공격을 막기 위함)
+                .name("홍길동")
+                .email("hong@test.com")
+                .phoneNo("01012345678")
+                .status(StudentStatus.ATTENDING)
+                .build();
+        mockMvc.perform(post("/api/students/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(badRequest)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateStudentEmptyInputValid() throws Exception{
+        StudentDto emptyStudentDto = StudentDto.builder().build();
+        mockMvc.perform(post("/api/students/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(emptyStudentDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateStudentWrongInputValid() throws Exception {
+        StudentDto emptyStudentDto = StudentDto.builder()
+                .name("   ") // 비어있는 공백을 입력으로 받을 경우
+                .email("hhh@hhh.com")
+                .phoneNo("010-1234-5678")
+                .build();
+
+        mockMvc.perform(post("/api/students/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(emptyStudentDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateStudentHATEOS() throws Exception {
+        mockMvc.perform(post("/api/students/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(studentDto)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.query-student").exists())
+                .andExpect(jsonPath("_links.update-student").exists());
+    }
 }

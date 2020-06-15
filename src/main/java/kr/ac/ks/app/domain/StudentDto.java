@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotEmpty;
 
 /*@Setter
 @Getter
@@ -15,8 +16,11 @@ import javax.persistence.Enumerated;
 @Builder
 
 public class StudentDto {
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String email;
+    @NotEmpty
     private String phoneNo;
     @Enumerated(EnumType.STRING)
     private StudentStatus status;
